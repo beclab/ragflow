@@ -28,7 +28,11 @@ jobs:
     runs-on: self-hosted
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Use the secret as an environment variable
+          fetch-depth: 0
+          fetch-tags: true
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -48,6 +52,12 @@ jobs:
     - publish_dockerhub_arm64
     runs-on: ubuntu-latest
     steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Use the secret as an environment variable
+          fetch-depth: 0
+          fetch-tags: true
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
