@@ -11,7 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}  # Use the secret as an environment variable
+          fetch-depth: 0
+          fetch-tags: true
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -21,50 +25,44 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: beclab/ragflow:${{ github.event.inputs.tags }}-amd64
+          tags: beclab/ragflow:${{ github.event.inputs.tags }}
           file: Dockerfile
           platforms: linux/amd64
-  publish_dockerhub_arm64:
-    runs-on: self-hosted
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Use the secret as an environment variable
-          fetch-depth: 0
-          fetch-tags: true
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASS }}
-      - name: Build and push arm64 Docker image
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: beclab/ragflow:${{ github.event.inputs.tags }}-arm64
-          file: Dockerfile
-          platforms: linux/arm64
+#  publish_dockerhub_arm64:
+#    runs-on: self-hosted
+#    steps:
+#      - name: Check out the repo
+#        uses: actions/checkout@v4
+#        with:
+#          token: ${{ secrets.GITHUB_TOKEN }}  # Use the secret as an environment variable
+#          fetch-depth: 0
+#          fetch-tags: true
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_PASS }}
+#      - name: Build and push arm64 Docker image
+#        uses: docker/build-push-action@v3
+#        with:
+#          push: true
+#          tags: beclab/ragflow:${{ github.event.inputs.tags }}-arm64
+#          file: Dockerfile
+#          platforms: linux/arm64
 
-  publish_manifest:
-    needs:
-    - publish_dockerhub_amd64
-    - publish_dockerhub_arm64
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}  # Use the secret as an environment variable
-          fetch-depth: 0
-          fetch-tags: true
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASS }}
-
-      - name: Push manifest
-        run: |
-          docker manifest create beclab/ragflow:${{ github.event.inputs.tags }} --amend beclab/ragflow:${{ github.event.inputs.tags }}-amd64 --amend beclab/ragflow:${{ github.event.inputs.tags }}-arm64
-          docker manifest push beclab/ragflow:${{ github.event.inputs.tags }}
+#  publish_manifest:
+#    needs:
+#    - publish_dockerhub_amd64
+#    - publish_dockerhub_arm64
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Log in to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_PASS }}
+#
+#      - name: Push manifest
+#        run: |
+#          docker manifest create beclab/ragflow:${{ github.event.inputs.tags }} --amend beclab/ragflow:${{ github.event.inputs.tags }}-amd64 --amend beclab/ragflow:${{ github.event.inputs.tags }}-arm64
+#          docker manifest push beclab/ragflow:${{ github.event.inputs.tags }}
