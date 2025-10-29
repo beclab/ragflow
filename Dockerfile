@@ -153,12 +153,17 @@ COPY docs docs
 RUN --mount=type=cache,id=ragflow_npm,target=/root/.npm,sharing=locked \
     cd web && npm install && npm run build
 
-COPY .git /ragflow/.git
-
-RUN version_info=$(git describe --tags --match=v* --first-parent --always); \
-    version_info="$version_info"; \
+ARG VERSION_INFO=unknown
+RUN version_info="${VERSION_INFO}"; \
     echo "RAGFlow version: $version_info"; \
-    echo $version_info > /ragflow/VERSION
+    echo $version_info > /ragflow/VERSION \
+
+#COPY .git /ragflow/.git
+#
+#RUN version_info=$(git describe --tags --match=v* --first-parent --always); \
+#    version_info="$version_info"; \
+#    echo "RAGFlow version: $version_info"; \
+#    echo $version_info > /ragflow/VERSION
 
 # production stage
 FROM base AS production
