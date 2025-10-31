@@ -32,7 +32,7 @@ class RAGFlowMinio:
         self.__open__()
 
     def _with_prefix(self, bucket: str) -> str:
-        prefix = settings.BUCKET_PREFIX or ""
+        prefix = settings.MINIO_BUCKET_PREFIX or ""
         return f"{prefix}-{bucket}" if prefix else bucket
 
     def __open__(self):

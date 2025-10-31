@@ -64,7 +64,8 @@ SVR_CONSUMER_GROUP_NAME = "rag_flow_svr_task_broker"
 PAGERANK_FLD = "pagerank_fea"
 TAG_FLD = "tag_feas"
 
-BUCKET_PREFIX = os.getenv('BUCKET_PREFIX', '')
+MINIO_BUCKET_PREFIX = os.getenv('MINIO_BUCKET_PREFIX', '')
+ES_INDEX_PREFIX = os.getenv('ES_INDEX_PREFIX', '')
 
 PARALLEL_DEVICES = 0
 try:
